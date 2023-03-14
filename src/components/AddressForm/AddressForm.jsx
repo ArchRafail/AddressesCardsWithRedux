@@ -23,11 +23,13 @@ export function AddressForm() {
     const [submitDisabled, setSubmitDisabled] = useState(true);
 
     useEffect(() => {
+        const abortController = new AbortController();
         if (id) {
             dispatch(getAddress(id));
             setSubmitDisabled(false);
         }
         return () => {
+            abortController.abort();
             dispatch(resetAddressState());
         }
     }, [])

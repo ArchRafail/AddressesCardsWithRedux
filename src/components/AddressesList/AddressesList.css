@@ -17,6 +17,12 @@
     margin-left: 24px;
 }
 
+.no-data {
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: firebrick;
+}
+
 .addresses {
     width: 100%;
     margin: auto;

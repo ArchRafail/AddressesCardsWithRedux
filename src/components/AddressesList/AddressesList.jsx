@@ -1,33 +1,35 @@
 import {useEffect, useState} from "react";
 import './AddressesList.css';
-import {AddressesApi} from "../../api/AddressesApi";
 import Address from "./Address";
 import {Button} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import {useNavigate} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {getAddressesList, resetAddressesListState, updateAddressesListState} from "../../store/addressesListSlice";
+import {deleteAddress} from "../../store/addressSlice";
 
 
 export function AddressesList() {
-    const [addresses, setAddresses] = useState([]);
+    const addresses = useSelector(state => state.addressesList);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const abortController = new AbortController();
-        setAddresses([]);
         getAddresses();
         return () => {
             abortController.abort();
+            dispatch(resetAddressesListState());
         };
     }, [])
 
-
     const getAddresses = () => {
         setLoading(true);
-        AddressesApi.getAll()
-            .then(addresses => {
-                setAddresses(addresses);
+        dispatch(getAddressesList())
+            .then(data => {
+                dispatch(updateAddressesListState({addresses: data}));
                 setLoading(false)
             })
             .catch(() => {
@@ -43,8 +45,9 @@ export function AddressesList() {
         navigate('/addresses/item/'+id, { replace: true });
     }
 
-    const deleteAddress = (id) => {
-        AddressesApi.delete(id).then(() => getAddresses());
+    const deleteAddressById = (id) => {
+        console.log(id);
+        dispatch(deleteAddress(id)).then(() => getAddresses());
     }
 
     return (
@@ -57,7 +60,8 @@ export function AddressesList() {
                 </div>
             </div>
 
-            { loading &&
+            {
+                loading &&
                 <div className="loaderContainer">
                     <div className="innerContainer">
                         <div className="ring"></div>
@@ -69,11 +73,16 @@ export function AddressesList() {
             }
 
             {
+                !loading && !addresses.length && <div className="no-data">Addresses not found</div>
+            }
+
+            {
                 !loading && addresses.length &&
                 <div className="addresses">
-                    {addresses.map(address =>
+                    {
+                        addresses.map(address =>
                         <Address key={address.id} id={address.id} country={address.country} city={address.city}
-                                 street={address.street} type={address.type} onAddressUpdate={addressUpdate} onDeleteAddress={deleteAddress}/>
+                                 street={address.street} type={address.type} onAddressUpdate={addressUpdate} onDeleteAddress={deleteAddressById}/>
                     )}
                 </div>
             }
