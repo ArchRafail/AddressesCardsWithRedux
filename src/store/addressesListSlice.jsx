@@ -3,20 +3,22 @@ import {AddressesApi} from "../api/AddressesApi";
 
 
 const initialState = {
-    addresses: []
+    addresses: [],
+    loading: false
 };
 
 export const addressesListSlice = createSlice({
     name: "addressesList",
     initialState,
-    reducers: {
-        updateAddressesListState: (state, action) => {
-            return {...state, addresses: [...state.addresses, action.payload]}
-        },
-        resetAddressesListState: () => initialState
-    },
     extraReducers: builder => {
-        builder.addCase(getAddressesList.fulfilled, (state, action) => action.payload)
+        builder.addCase(getAddressesList.pending, (state, action) => {
+            state.loading = true;
+            state.addresses = action.payload;
+    })
+        builder.addCase(getAddressesList.fulfilled, (state, action) => {
+            state.loading = false;
+            state.addresses = action.payload;
+        })
     }
 })
 
@@ -24,7 +26,5 @@ export const getAddressesList = createAsyncThunk(
     'addresses/get',
     async () => await AddressesApi.getAll()
 )
-
-export const { updateAddressesListState, resetAddressesListState } = addressesListSlice.actions
 
 export default addressesListSlice.reducer;

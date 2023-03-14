@@ -4,11 +4,15 @@ import {AddressesApi} from "../api/AddressesApi";
 
 
 const initialState = {
-    id: undefined,
-    country: '',
-    city: '',
-    street: '',
-    type: AddressType.OFFICE
+    addressData: {
+        id: undefined,
+        country: '',
+        city: '',
+        street: '',
+        type: AddressType.OFFICE
+    },
+    loading: false,
+    error: undefined
 }
 
 export const addressSlice = createSlice({
@@ -16,14 +20,36 @@ export const addressSlice = createSlice({
     initialState,
     reducers: {
         updateAddressState: (state, action) => {
-            return {...state, ...action.payload}
+            return {...state, addressData: { ...state.addressData, ...action.payload } }
         },
         resetAddressState: () => initialState
     },
     extraReducers: builder => {
-        builder.addCase(getAddress.fulfilled, (state, action) => action.payload)
-        builder.addCase(createAddress.fulfilled, (state, action) => action.payload)
-        builder.addCase(updateAddress.fulfilled, (state, action) => action.payload)
+        builder.addCase(getAddress.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = undefined;
+            state.addressData = action.payload;
+        })
+        builder.addCase(getAddress.pending, (state, action) => {
+            state.loading = true;
+            state.error = undefined;
+            state.addressData = action.payload;
+        })
+        builder.addCase(getAddress.rejected, (state, action) => {
+            state.loading = false;
+            state.error = "Internal Server Error! Something went wrong.";
+            state.addressData = action.payload;
+        })
+        builder.addCase(createAddress.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = undefined;
+            state.addressData = action.payload;
+        })
+        builder.addCase(updateAddress.fulfilled, (state, action) => {
+            state.loading = false;
+            state.error = undefined;
+            state.addressData = action.payload;
+        })
         builder.addCase(deleteAddress.fulfilled, (state, action) => action.payload)
     }
 })
@@ -35,12 +61,12 @@ export const getAddress = createAsyncThunk(
 
 export const createAddress = createAsyncThunk(
     'address/create',
-    async (address) => await AddressesApi.create(address)
+    async (addressData) => await AddressesApi.create(addressData)
 )
 
 export const updateAddress = createAsyncThunk(
     'address/update',
-    async (address) => await AddressesApi.update(address)
+    async (addressData) => await AddressesApi.update(addressData)
 )
 
 export const deleteAddress = createAsyncThunk(

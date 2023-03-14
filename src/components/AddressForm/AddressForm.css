@@ -1,3 +1,13 @@
+.error-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: red;
+    font-size: 26px;
+    margin-top: 36px;
+}
+
 .container {
     display: flex;
     flex-direction: column;

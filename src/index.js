@@ -5,9 +5,10 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import {AddressesList} from "./components/AddressesList";
-import {AddressForm} from "./components/AddressForm/AddressForm";
+import {AddressForm} from "./components/AddressForm";
 import {Provider} from "react-redux";
 import store from "./store/store";
+import {PageNotFound} from "./components/PageNotFound";
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -17,9 +18,10 @@ root.render(
             <Routes>
                 <Route path="/" element={<App/>}>
                     <Route path="" element={<Navigate replace to="/addresses" />} />
-                    <Route path="addresses" element={<AddressesList/>}></Route>
-                    <Route path="addresses/item/:id" element={<AddressForm/>}></Route>
-                    <Route path="addresses/item" element={<AddressForm/>}></Route>
+                    <Route path="addresses" element={<AddressesList/>}/>
+                    <Route path="addresses/item/:id" element={<AddressForm/>} />
+                    <Route path="addresses/item" element={<AddressForm/>} />
+                    <Route path="*" element={<PageNotFound/>} />
                 </Route>
             </Routes>
         </BrowserRouter>

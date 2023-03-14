@@ -3,3 +3,7 @@
   max-width: 1850px;
   margin: auto;
 }
+
+.anonymous-page {
+  color: red;
+}

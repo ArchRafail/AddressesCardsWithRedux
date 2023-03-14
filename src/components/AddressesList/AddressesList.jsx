@@ -1,18 +1,17 @@
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import './AddressesList.css';
-import Address from "./Address";
+import {Address} from "./Address";
 import {Button} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {getAddressesList, resetAddressesListState, updateAddressesListState} from "../../store/addressesListSlice";
+import {getAddressesList} from "../../store/addressesListSlice";
 import {deleteAddress} from "../../store/addressSlice";
 
 
 export function AddressesList() {
-    const addresses = useSelector(state => state.addressesList);
-    const [loading, setLoading] = useState(false);
+    const { addresses, loading } = useSelector((state) => state.addressesList);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -21,21 +20,10 @@ export function AddressesList() {
         getAddresses();
         return () => {
             abortController.abort();
-            dispatch(resetAddressesListState());
         };
     }, [])
 
-    const getAddresses = () => {
-        setLoading(true);
-        dispatch(getAddressesList())
-            .then(data => {
-                dispatch(updateAddressesListState({addresses: data}));
-                setLoading(false)
-            })
-            .catch(() => {
-                setLoading(false);
-            })
-    }
+    const getAddresses = () => dispatch(getAddressesList())
 
     const addAddress = () => {
         navigate('/addresses/item', { replace: true });
@@ -46,7 +34,6 @@ export function AddressesList() {
     }
 
     const deleteAddressById = (id) => {
-        console.log(id);
         dispatch(deleteAddress(id)).then(() => getAddresses());
     }
 

@@ -28,12 +28,31 @@
     margin: auto;
 }
 
+@media (min-width: 1237px) and (max-width: 1648px) {
+    .top-line {
+        max-width: 1200px;
+    }
+}
+
+@media (min-width: 843px) and (max-width: 1236px) {
+    .top-line {
+        max-width: 780px;
+    }
+}
+
+@media (max-width: 842px) {
+    .top-line {
+        max-width: 500px;
+    }
+}
+
 /* Loading animation*/
 
 .loaderContainer {
     display: block;
     margin-top: 50px;
     margin-bottom: 50px;
+    user-select: none;
 }
 
 .innerContainer {

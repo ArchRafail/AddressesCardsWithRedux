@@ -3,7 +3,7 @@ import {AddressType} from "../modal/AddressType.ts";
 import './Address.css';
 
 
-export default function Address(props) {
+export function Address(props) {
     let [id] = useState(props.id)
     let [country] = useState(props.country);
     let [city] = useState(props.city);

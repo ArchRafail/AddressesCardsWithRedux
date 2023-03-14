@@ -18,7 +18,7 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 export function AddressForm() {
     const { id } = useParams();
     const dispatch = useDispatch();
-    const address = useSelector(state => state.address);
+    const { addressData, loading, error } = useSelector(state => state.address);
     const navigate = useNavigate();
     const [submitDisabled, setSubmitDisabled] = useState(true);
 
@@ -47,20 +47,20 @@ export function AddressForm() {
         event.preventDefault();
         setSubmitDisabled(true);
         if (id) {
-            dispatch(updateAddress(address)).then(() => navigate("/addresses"));
+            dispatch(updateAddress(addressData)).then(() => navigate("/addresses"));
         } else {
-            dispatch(createAddress(address)).then(() => navigate("/addresses"))
+            dispatch(createAddress(addressData)).then(() => navigate("/addresses"))
         }
     }
 
     const blankAudit = () => {
-        if (address.country.toString().trim().length === 0) {
+        if (addressData.country.toString().trim().length === 0) {
             return false;
         }
-        if (address.city.toString().trim().length === 0) {
+        if (addressData.city.toString().trim().length === 0) {
             return false;
         }
-        return address.street.toString().trim().length !== 0;
+        return addressData.street.toString().trim().length !== 0;
     }
 
     const getBack = () => {
@@ -69,26 +69,52 @@ export function AddressForm() {
     }
 
     return (
-        <div className="container">
-            <form onSubmit={saveAddress}>
-                <h3>{id ? 'Update' : 'Add'} address {id && '#' + id}</h3>
-                <TextField label="Country" name="country" value={address.country} onChange={handleFormChange} className="input"></TextField>
-                <TextField label="City" name="city" value={address.city} onChange={handleFormChange} className="input"></TextField>
-                <TextField label="Street" name="street" value={address.street} onChange={handleFormChange} className="input"></TextField>
-                <div className="address-type">
-                    <div className="internal-address">
-                        <FormLabel component="legend" >Address type:</FormLabel>
-                        <RadioGroup aria-label="addressType" name="type" onChange={handleFormChange}>
-                            <FormControlLabel value="HOME" control={<Radio/>} label="Home" checked={address.type === AddressType.HOME} />
-                            <FormControlLabel value="OFFICE" control={<Radio/>} label="Office" checked={address.type === AddressType.OFFICE} />
-                        </RadioGroup>
+        <>
+            {
+                loading &&
+                <div className="loaderContainer">
+                    <div className="innerContainer">
+                        <div className="ring"></div>
+                        <div className="ring"></div>
+                        <div className="ring"></div>
+                        <p>Loading address...</p>
                     </div>
                 </div>
-                <div className="buttons-group">
-                    <Button type="button" variant="contained" className="button" onClick={getBack} startIcon={<ArrowBackIosNewOutlinedIcon/>}>Back</Button>
-                    <Button type="submit" variant="contained" className="button" disabled={submitDisabled} endIcon={<SaveOutlinedIcon/>}>Save</Button>
+            }
+
+            {
+                !loading && error &&
+                <div className="error-wrapper">
+                    <img src="/500Error.JPG" alt="HTTP 500 Error."/>
+                    <p>{error}</p>
+                    <Button type="button" variant="contained" onClick={getBack} startIcon={<ArrowBackIosNewOutlinedIcon/>}>Go back</Button>
                 </div>
-            </form>
-        </div>
+            }
+
+            {
+                !loading && !error &&
+                <div className="container">
+                    <form onSubmit={saveAddress}>
+                        <h3>{id ? 'Update' : 'Add'} address {id && '#' + id}</h3>
+                        <TextField label="Country" name="country" value={addressData.country} onChange={handleFormChange} className="input"></TextField>
+                        <TextField label="City" name="city" value={addressData.city} onChange={handleFormChange} className="input"></TextField>
+                        <TextField label="Street" name="street" value={addressData.street} onChange={handleFormChange} className="input"></TextField>
+                        <div className="address-type">
+                            <div className="internal-address">
+                                <FormLabel component="legend" >Address type:</FormLabel>
+                                <RadioGroup aria-label="addressType" name="type" onChange={handleFormChange}>
+                                    <FormControlLabel value="HOME" control={<Radio/>} label="Home" checked={addressData.type === AddressType.HOME} />
+                                    <FormControlLabel value="OFFICE" control={<Radio/>} label="Office" checked={addressData.type === AddressType.OFFICE} />
+                                </RadioGroup>
+                            </div>
+                        </div>
+                        <div className="buttons-group">
+                            <Button type="button" variant="contained" className="button" onClick={getBack} startIcon={<ArrowBackIosNewOutlinedIcon/>}>Back</Button>
+                            <Button type="submit" variant="contained" className="button" disabled={submitDisabled} endIcon={<SaveOutlinedIcon/>}>Save</Button>
+                        </div>
+                    </form>
+                </div>
+            }
+        </>
     )
 }
