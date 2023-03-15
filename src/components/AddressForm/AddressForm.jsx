@@ -92,7 +92,7 @@ export function AddressForm() {
             }
 
             {
-                !loading && !error &&
+                !loading && !error && addressData &&
                 <div className="container">
                     <form onSubmit={saveAddress}>
                         <h3>{id ? 'Update' : 'Add'} address {id && '#' + id}</h3>
